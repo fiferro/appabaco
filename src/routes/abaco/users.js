@@ -31,7 +31,7 @@ router.get("/users", function (req, res) {
         var userQuery = "select * from Users";
         return querySql(userQuery, '', req.headers.authorization)
           .then(function (rows) {
-            res.status(200).json({ rows });
+            res.status(200).json( rows );
           });
       }
 
@@ -74,7 +74,7 @@ router.post("/users", function (req, res) {
         var userInsert = "INSERT INTO Users (name, email, password) VALUES ('" + req.body.name + "','" + req.body.email + "','" + passwordHash.generate(req.body.pass) + "')";
         return db.insertSql(userInsert)
           .then(function (returns) {
-            res.status(200).json({ returns });
+            res.status(200).json( returns );
           });
       }
     });
@@ -91,7 +91,7 @@ router.patch("/users", function (req, res) {
         var userInsert = "update Users set name = '" + req.body.name + "',email = '" + req.body.email + "', password = '" + req.body.pass + "' where idUser = " + req.body.idUser;
         return db.insertSql(userInsert)
           .then(function (returns) {
-            res.status(200).json({ returns });
+            res.status(200).json( returns );
           });
       }
     });

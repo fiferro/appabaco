@@ -1,11 +1,9 @@
 var config = {};
-
- config.db = {
-  host     : 'br734.hostgator.com.br',
+config.db = {
+  host     : 'db4free.net',
   port     : '3306',
-  user     : 'toaki932_fferro',
-  password : 'Luca@2010',
-  database : 'toaki932_pthood'
+  user     : 'phbancodados',
+  password : 'f6828f84',
+  database : 'phbancodados'
 };
-
 module.exports = config;

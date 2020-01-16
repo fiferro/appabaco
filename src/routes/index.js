@@ -34,6 +34,7 @@ router.use('/abaco', require('./abaco/vendor'));
 router.use('/abaco', require('./abaco/operation'));
 router.use('/abaco', require('./abaco/client'));
 router.use('/abaco', require('./abaco/abaco'));
+router.use('/abaco', require('./abaco/report'));
 
 
 module.exports = router;

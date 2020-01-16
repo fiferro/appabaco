@@ -41,8 +41,29 @@ router.get("/client/:idClient", function (req, res) {
         var cliQuery = "SELECT * ";
         cliQuery += "FROM Cliente C "
         cliQuery += "LEFT JOIN Garantia G  ON  C.idWarranty = G.idGarantia ";
-        cliQuery += "WHERE idCliente = " + idClient;
+        cliQuery += " WHERE idCliente = " + idClient;
         return querySql(cliQuery, '')
+          .then(function (rows) {
+            res.status(200).json(rows);
+          });
+      }
+    });
+});
+
+router.get("/client/abaco/:idClient", function (req, res) { 
+  let idClient = req.params.idClient
+  return db.Hash(req.headers.authorization)
+    .then(function (valid) {
+      if (valid.length == 0) {
+        res.status(500).json('unauthorized');
+      }
+      else {
+        var cliAbaco = "Select a.idAbaco, a.Total, a.dataOperacao, a.parcelas, ";
+        cliAbaco +="(select sum(ab.valorPago) from AbacoParc ab where ab.idAbaco = a.idAbaco) as vlrPago "
+        cliAbaco += " from Cliente c  "
+        cliAbaco += " inner join Abaco a on a.idCliente = c.idCliente ";
+        cliAbaco += " WHERE c.idCliente = " + idClient;
+        return querySql(cliAbaco, '')
           .then(function (rows) {
             res.status(200).json(rows);
           });
@@ -58,19 +79,33 @@ router.post("/client", function (req, res) {
       }
       else {
         var cliInsert = "INSERT INTO Cliente"
-        cliInsert += "(nameCliente,cpfCliente,rgCliente,birthCliente,adressCliente,phoneCliente,cellCliente,companyCliente,officeCliente,rentCliente,"
-        cliInsert += "adressCompanyCliente,nameMassClient1,phonemassCliente1,nameMassCliente2,phoneMassCliente2,idWarranty, indClient, indNameClient, dtCadClient, abrvClient,"
+        if(req.body.birthCliente){ 
+           cliInsert += "(nameCliente,cpfCliente,rgCliente,birthCliente,adressCliente,phoneCliente,cellCliente,companyCliente,officeCliente,rentCliente,"}
+        else{
+          cliInsert += "(nameCliente,cpfCliente,rgCliente,adressCliente,phoneCliente,cellCliente,companyCliente,officeCliente,rentCliente,"
+        }
+     
+        cliInsert += "adressCompanyCliente,nameMassClient1,phonemassCliente1,nameMassCliente2,phoneMassCliente2,idWarranty, indNameClient, dtCadClient, abrvClient,"
         cliInsert += " especGarantia, facebook, instagran  ) VALUES (";
-        cliInsert += " '" + req.body.nameCliente + "','" + req.body.cpfCliente + "', '" + req.body.rgCliente + "', '" + req.body.birthCliente + "',"
+        if(req.body.birthCliente){ 
+          cliInsert += " '" + req.body.nameCliente + "','" + req.body.cpfCliente + "', '" + req.body.rgCliente + "', '" + req.body.birthCliente + "',"
+        }
+       else{
+        cliInsert += " '" + req.body.nameCliente + "','" + req.body.cpfCliente + "', '" + req.body.rgCliente + "',"
+       }
+      
         cliInsert += " '" + req.body.adressCliente + "', '" + req.body.phoneCliente + "', '" + req.body.cellCliente + "', '" + req.body.companyCliente + "',"
         cliInsert += " '" + req.body.officeCliente + "','" + req.body.rentCliente + "', '" + req.body.adressCompanyCliente + "', '" + req.body.nameMassClient1 + "',"
         cliInsert += " '" + req.body.phonemassCliente1 + "','" + req.body.nameMassCliente2 + "', '" + req.body.phoneMassCliente2 + "', '" + req.body.idWarranty + "',"
-        cliInsert += " '" + req.body.indClient + "','" + req.body.indNameClient + "', '" + req.body.dtCadClient + "', '" + req.body.abrvClient + "',"
+        cliInsert += " '" + req.body.indNameClient + "', SYSDATE(), '" + req.body.abrvClient + "',"
         cliInsert += " '" + req.body.especWarranty + "','" + req.body.facebook + "', '" + req.body.instagran + "')"
 
         return db.insertSql(cliInsert)
           .then(function (returns) {
             res.status(200).json({ returns });
+          })
+          .error(function (returns) {
+            res.status(400).json({ returns });
           });
       }
     });
@@ -99,7 +134,6 @@ router.patch("/client", function (req, res) {
         garantiaInsert += " phonemassCliente1 = '" + req.body.phonemassCliente1 + "',"
         garantiaInsert += " nameMassCliente2 = '" + req.body.nameMassCliente2 + "',"
         garantiaInsert += " phoneMassCliente2 = '" + req.body.phoneMassCliente2 + "',"
-        garantiaInsert += " indClient = '" + req.body.indClient + "',"
         garantiaInsert += " idWarranty = '" + req.body.idWarranty + "',"
         garantiaInsert += " indNameClient = '" + req.body.indNameClient + "',"
         garantiaInsert += " dtCadClient = '" + req.body.dtCadClient + "',"
@@ -141,5 +175,6 @@ router.delete("/client", function (req, res) {
       }
     });
 });
+
 
 module.exports = router;

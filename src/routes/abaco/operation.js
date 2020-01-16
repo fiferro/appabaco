@@ -52,7 +52,7 @@ router.post("/operation", function (req, res) {
         res.status(500).json('unauthorized');
       }
       else {
-        var garantiaInsert = "INSERT INTO Operacao (descOperacao, idCalculo) VALUES ('" + req.body.descOperacao + "','"+req.body.idCalculo+"')";
+        var garantiaInsert = "INSERT INTO Operacao (descOperacao, idCalculo, qtdDias) VALUES ('" + req.body.descOperacao + "','"+req.body.idCalculo+"', '"+ req.body.numDays +"')";
         return db.insertSql(garantiaInsert)
           .then(function (returns) {
             res.status(200).json({ returns });
@@ -68,7 +68,7 @@ router.patch("/operation", function (req, res) {
         res.status(500).json('unauthorized');
       }
       else {
-        var garantiaInsert = "update Operacao set descOperacao = '" + req.body.descOperacao + "', idCalculo = '" + req.body.idCalculo + "' where idOperacao = " + req.body.idOperacao;
+        var garantiaInsert = "update Operacao set descOperacao = '" + req.body.descOperacao + "', qtdDias = '" + req.body.numDays +  "', idCalculo = '" + req.body.idCalculo + "' where idOperacao = " + req.body.idOperacao;
         return db.insertSql(garantiaInsert)
           .then(function (returns) {
             res.status(200).json({ returns });
